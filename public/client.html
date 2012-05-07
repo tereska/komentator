@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Client Test</title>
+	<script type="text/javascript" src="http://10.166.53.10:8000/faye/client.js"></script>
+</head>
+<body>
+    <script type="text/javascript">
+		var client = null;
+		var port = 8001;
+		var getPort = function(){
+			if(port==8000) {
+				console.log('connecting to 8001');
+				port = 8001;
+				return 8001;
+			} else {
+				console.log('connecting to 8000');
+				port = 8000;
+				return 8000;
+			}
+		}
+		var callback = function(message){
+			console.log(message);
+		}
+		var client = new Faye.Client('http://10.166.53.10:'+getPort()+'/faye');
+		refine();
+		var subscription = client.subscribe('/**', callback);
+		function refine(){
+			console.log('refine');
+			client.bind('transport:down', function() {
+				console.log('transport DOWN!');
+				subscription.cancel();
+				client.disconnect();
+				client = null;
+				client = new Faye.Client('http://10.166.53.10:'+getPort()+'/faye');
+				refine();
+				subscription = client.subscribe('/**', callback);
+			}, this);
+		}
+		
+		/*
+		setTimeout(function(){
+			var publication = client.publish('/faye/cluster/endpoints', ['http://10.166.53.10:9999']);
+			publication.callback(function() {
+			    console.log('OK', arguments);
+			});
+			publication.errback(function(error) {
+			    console.log('ERROR', arguments);
+			});
+		}, 5000);
+		*/
+    </script>
+</body>
+</html>
