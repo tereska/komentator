@@ -36,9 +36,10 @@ dns.resolve(os.hostname(), function(err, ips){
         }
         response.end(JSON.stringify({nodes: nodes, edges: edges}));
     });
+    httpServer._backlog = 100000;
 	
 	nodeUrl = 'http://' + host + ':' + port + mount;
-    server = new faye.NodeAdapter({mount: mount});
+    server = new faye.NodeAdapter({mount: mount, timeout: 3600});
 	supervizor = new Supervizor();
 	server.addExtension(supervizor);
 	node = new cluster.Node(nodeUrl);
@@ -53,4 +54,22 @@ dns.resolve(os.hostname(), function(err, ips){
 });
 
 
+process.stdin.resume();
+process.stdin.setEncoding('utf8');
 
+var intMsg = null;
+process.stdin.on('data', function (chunk) {
+console.log(chunk);
+if(chunk.indexOf('start') > -1){
+    intMsg = setInterval(function(){
+       server.getClient().publish('/foo', Date.now());
+    }, 10000);
+
+} else if (chunk.indexOf('stop') > -1) {
+  clearInterval(intMsg);
+}
+});
+
+process.on('SIGINT', function () {
+  process.exit();
+});

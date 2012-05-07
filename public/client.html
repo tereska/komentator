@@ -5,7 +5,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Client Test</title>
-	<script type="text/javascript" src="http://10.166.53.10:8000/faye/client.js"></script>
+	<script type="text/javascript" src="http://10.177.53.175:8080/faye/client.js"></script>
 </head>
 <body>
     <script type="text/javascript">
@@ -18,14 +18,14 @@
 				return 8001;
 			} else {
 				console.log('connecting to 8000');
-				port = 8000;
-				return 8000;
+				port = 8080;
+				return 8080;
 			}
 		}
 		var callback = function(message){
-			console.log(message);
+			console.log(message + ' ' + Date.now() + 'diff: ' + (Date.now() - message));
 		}
-		var client = new Faye.Client('http://10.166.53.10:'+getPort()+'/faye');
+		var client = new Faye.Client('http://10.177.53.175:'+getPort()+'/faye');
 		refine();
 		var subscription = client.subscribe('/**', callback);
 		function refine(){
@@ -35,12 +35,16 @@
 				subscription.cancel();
 				client.disconnect();
 				client = null;
-				client = new Faye.Client('http://10.166.53.10:'+getPort()+'/faye');
+				client = new Faye.Client('http://10.177.53.175:'+getPort()+'/faye');
 				refine();
 				subscription = client.subscribe('/**', callback);
 			}, this);
 		}
 		
+function msg(){
+client.publish('/foo', Date.now());
+}
+
 		/*
 		setTimeout(function(){
 			var publication = client.publish('/faye/cluster/endpoints', ['http://10.166.53.10:9999']);
@@ -53,5 +57,6 @@
 		}, 5000);
 		*/
     </script>
+<button onclick="msg()">Send</button>
 </body>
 </html>
