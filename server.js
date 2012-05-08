@@ -1,24 +1,24 @@
-var http = require('http'),
-	dns = require('dns'),
-	os = require('os'),
-	faye    = require('faye'),
-	cluster = require('./lib/faye/cluster'),
-	port    = process.argv[2],
+var http = require('http');
+var dns = require('dns');
+var os = require('os');
+var faye = require('faye');
+
+var Node = require('./lib/Node.js');
+var Supervizor = require('./lib/Supervizor.js');
+
+var port    = process.argv[2],
 	remoteHost  = process.argv[3],
 	remotePort = process.argv[4],
-	mount = '/faye',
+	mount = '/dl',
 	node = null,
 	server = null,
 	httpServer = null,
 	nodeUrl = null,
 	host = 'localhost',
-	Agent = require('./lib/faye/agent.js'),
-	agent = null,
-	Supervizor = require('./lib/faye/supervizor.js'),
 	supervizor = null;
 
 dns.resolve(os.hostname(), function(err, ips){
-    if(ips && ips[0]){
+    if(!err && ips && ips[0]){
         host = ips[0];
     }
     httpServer = http.createServer(function(request, response) {
@@ -38,14 +38,11 @@ dns.resolve(os.hostname(), function(err, ips){
     });
     httpServer._backlog = 100000;
 	
-	nodeUrl = 'http://' + host + ':' + port + mount;
+	  nodeUrl = 'http://' + host + ':' + port + mount;
     server = new faye.NodeAdapter({mount: mount, timeout: 3600});
-	supervizor = new Supervizor();
-	server.addExtension(supervizor);
-	node = new cluster.Node(nodeUrl);
-	server.addExtension(node);
-	agent = new Agent();
-	//server.addExtension(agent);
+	  //server.addExtension(new Supervizor('sj', 'sj'));
+	  node = new Node(nodeUrl, 'sj', 'sj');
+	  server.addExtension(node);
     server.attach(httpServer);
     httpServer.listen(port);
     if (remoteHost && remotePort) {
@@ -56,20 +53,15 @@ dns.resolve(os.hostname(), function(err, ips){
 
 process.stdin.resume();
 process.stdin.setEncoding('utf8');
-
 var intMsg = null;
 process.stdin.on('data', function (chunk) {
-console.log(chunk);
-if(chunk.indexOf('start') > -1){
-    intMsg = setInterval(function(){
-       server.getClient().publish('/foo', Date.now());
-    }, 10000);
-
-} else if (chunk.indexOf('stop') > -1) {
-  clearInterval(intMsg);
-}
-});
-
-process.on('SIGINT', function () {
-  process.exit();
+    if(chunk.indexOf('start') > -1){
+        intMsg = setInterval(function(){
+           server.getClient().publish('/onet/sport', Date.now());
+        }, 10000);
+    } else if (chunk.indexOf('stop') > -1) {
+        clearInterval(intMsg);
+    } else if (chunk.indexOf('exit') > -1) {
+        process.exit();
+    }
 });

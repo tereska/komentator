@@ -1,13 +1,10 @@
 var faye = require('faye');
 var clients = [];
 var stats = 0;
+var handler = function () { stats += 1; };
 
-
-var handler = function(){
-  stats += 1;
-};
 var connHandler = function(){
-  if(clients.length >= process.argv[2]){
+  if(clients.length >= process.argv[4]){
     console.log('clients created');
   } else {
     makeClient();
@@ -15,10 +12,10 @@ var connHandler = function(){
 }
 
 function makeClient(){
-  clients.push(new faye.Client('http://localhost:8080/faye'));
-  var index = clients.length-1;
+  var index = clients.push(new faye.Client('http://' + process.argv[2] + ':' + process.argv[3] + '/dl'));
+  index -= 1;
   clients[index].bind('transport:up', connHandler);
-  clients[index].subscribe('/foo', handler);
+  clients[index].subscribe('/onet/sport', handler);
 }
 makeClient();
 
@@ -33,8 +30,6 @@ process.on('SIGINT', function () {
     clients[i].disconnect();
   }
   console.log('done');
-  setTimeout(function(){
-    process.exit();
-  }, 1000)
+  setTimeout(process.exit, 1000);
 });
 
