@@ -4,7 +4,6 @@ var os = require('os');
 var faye = require('faye');
 
 var Node = require('./lib/Node.js');
-var Supervizor = require('./lib/Supervizor.js');
 
 var port    = process.argv[2],
 	remoteHost  = process.argv[3],
@@ -14,8 +13,7 @@ var port    = process.argv[2],
 	server = null,
 	httpServer = null,
 	nodeUrl = null,
-	host = 'localhost',
-	supervizor = null;
+	host = 'localhost';
 
 dns.resolve(os.hostname(), function(err, ips){
     if(!err && ips && ips[0]){
@@ -40,7 +38,6 @@ dns.resolve(os.hostname(), function(err, ips){
 	
 	  nodeUrl = 'http://' + host + ':' + port + mount;
     server = new faye.NodeAdapter({mount: mount, timeout: 3600});
-	  //server.addExtension(new Supervizor('sj', 'sj'));
 	  node = new Node(nodeUrl, 'sj', 'sj');
 	  server.addExtension(node);
     server.attach(httpServer);

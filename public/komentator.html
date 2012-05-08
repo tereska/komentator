@@ -5,25 +5,17 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Client Test</title>
-	<script type="text/javascript" src="http://10.177.48.186:8000/dl/client.js"></script>
+	<script type="text/javascript" src="client.js"></script>
 </head>
 <body>
     <script type="text/javascript">
     var host = '10.177.48.186';
-		var port = 8001;
     var client = null;
     var subscription = null;
-		
+    
+		var port = 8001;
     var getPort = function(){
-			if(port==8000) {
-				console.log('connecting to 8001');
-				port = 8001;
-				return 8001;
-			} else {
-				console.log('connecting to 8000');
-				port = 8000;
-				return 8000;
-			}
+			return 8001;
 		}
    
     var callback = function(message){

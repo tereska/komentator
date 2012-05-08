@@ -1,0 +1,19 @@
+startup_message off
+
+vbell off
+defscrollback 10000
+defutf8 on
+shelltitle "$ |bash"
+hardstatus alwayslastline
+hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %m-%d %{W}%c %{g}]'
+
+# syntax: screen -t label order command
+
+zombie kr
+
+screen -t C1 1 node fconn.js $IP $PORT 10000
+screen -t C2 2 node fconn.js $IP $PORT 10000
+screen -t C3 3 node fconn.js $IP $PORT 10000
+screen -t C4 4 node fconn.js $IP $PORT 10000
+screen -t C5 5 node fconn.js $IP $PORT 10000
+screen -t C6 6 node fconn.js $IP $PORT 10000
