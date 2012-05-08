@@ -1,0 +1,21 @@
+startup_message off
+
+vbell off
+defscrollback 10000
+defutf8 on
+shelltitle "$ |bash"
+hardstatus alwayslastline
+hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %m-%d %{W}%c %{g}]'
+
+# syntax: screen -t label order command
+
+zombie kr
+
+screen -t S1 1 sh -c "sleep 1 ; node server.js 8001"
+screen -t S2 2 sh -c "sleep 2 ; node server.js 8002 10.177.48.186 8001"
+screen -t S3 3 sh -c "sleep 3 ; node server.js 8003 10.177.48.186 8001"
+screen -t S4 4 sh -c "sleep 4 ; node server.js 8004 10.177.48.186 8001"
+screen -t S5 5 sh -c "sleep 5 ; node server.js 8005 10.177.48.186 8001"
+screen -t S6 6 sh -c "sleep 6 ; node server.js 8006 10.177.48.186 8001"
+screen -t S7 7 sh -c "sleep 7 ; node server.js 8007 10.177.48.186 8001"
+screen -t S8 8 sh -c "sleep 8 ; node server.js 8008 10.177.48.186 8001"
