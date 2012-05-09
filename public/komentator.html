@@ -9,6 +9,7 @@
 </head>
 <body>
     <script type="text/javascript">
+    var ds = null;
     var host = '10.177.48.186';
     var client = null;
     var subscription = null;
@@ -20,6 +21,7 @@
    
     var callback = function(message){
 			console.log('onMessage: ', message);
+      console.log(Date.now() - ds);
 		}
     client = new Faye.Client('http://'+host+':'+getPort()+'/dl');
 		refine();
@@ -38,7 +40,9 @@
 		}
 		
     function msg(){
-        client.publish('/onet/sport', {username: 'sj', password: 'sj', msg: document.getElementById('msg').value});
+        var client2 = new Faye.Client('http://'+host+':'+'8008'+'/dl');
+        client2.publish('/onet/sport', {username: 'sj', password: 'sj', msg: document.getElementById('msg').value});
+        ds = Date.now();
     }
     </script>
 <input type="text" id="msg" value="Hello!" />
